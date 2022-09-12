@@ -1,1 +1,2 @@
-# movies-explorer-api
+# Проект "Movies Explorer"
+
