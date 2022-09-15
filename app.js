@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/moviesdb', {
 
 app.use(cors({
   origin: [
-    'api.delm.diplom.nomoredomains.sbs',
+    'http://api.delm.diplom.nomoredomains.sbs',
     'http://localhost:3001',
   ],
   credentials: true,
