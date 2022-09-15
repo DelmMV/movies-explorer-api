@@ -10,7 +10,7 @@ const { limiter } = require('./middlewares/rate-limit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const rootRouter = require('./routes/index');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/moviesdb', {
@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/moviesdb', {
 
 app.use(cors({
   origin: [
-    'http://localhost:3000',
+    'api.delm.diplom.nomoredomains.sbs',
     'http://localhost:3001',
   ],
   credentials: true,
