@@ -8,12 +8,12 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/error-handler');
 const { limiter } = require('./middlewares/rate-limit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { PORT, MONGO_URL } = require('./utils/config');
 const rootRouter = require('./routes/index');
 
-const { PORT } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
