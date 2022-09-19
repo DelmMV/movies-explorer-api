@@ -53,7 +53,7 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return next(new UnauthorizedError('Пользователь с указанным email не найден'));
+        return next(new UnauthorizedError('Неверный логин или пароль'));
       }
       bcrypt.compare(password, user.password, ((err, isValid) => {
         if (err || !isValid) {
