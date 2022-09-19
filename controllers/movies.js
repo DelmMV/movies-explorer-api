@@ -64,7 +64,7 @@ const deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Фильма с указанным id не найдена'));
+        return next(new BadRequestError('Некорретный id'));
       }
       next(err);
       return (next);
