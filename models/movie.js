@@ -1,81 +1,79 @@
-const mongoose = require('mongoose');
-const isURL = require('validator/lib/isURL');
+const mongoose = require("mongoose");
+const validator = require("validator");
 
-const validLink = /https?:\/\/(www\.)?[a-zA-Zа-яА-Я0-9._~:/?#[\]@!$&’()*+,;=\\-]+#?/g;
-
-const movieSchema = new mongoose.Schema({
-  country: {
-    type: String,
-    required: true,
-  },
-  director: {
-    type: String,
-    required: true,
-  },
-  duration: {
-    type: Number,
-    required: true,
-  },
-  year: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (v) => {
-        validLink.test(v);
-        const isValid = isURL(v);
-        return isValid;
+const movieSchema = new mongoose.Schema(
+  {
+    country: {
+      type: String,
+      required: true,
+    },
+    director: {
+      type: String,
+      required: true,
+    },
+    duration: {
+      type: Number,
+      required: true,
+    },
+    year: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+      validator: (link) => {
+        validator.isURL(link, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+        });
       },
-      message: 'Неправильный формат ссылки',
+    },
+    trailerLink: {
+      type: String,
+      required: true,
+      validator: (link) => {
+        validator.isURL(link, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+        });
+      },
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+      validator: (link) => {
+        validator.isURL(link, {
+          protocols: ["http", "https"],
+          require_protocol: true,
+        });
+      },
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
+    movieId: {
+      type: Number,
+      required: true,
+    },
+    nameRU: {
+      type: String,
+      required: true,
+    },
+    nameEN: {
+      type: String,
+      required: true,
     },
   },
-  trailerLink: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (v) => {
-        validLink.test(v);
-        const isValid = isURL(v);
-        return isValid;
-      },
-      message: 'Неправильный формат ссылки',
-    },
-  },
-  thumbnail: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (v) => {
-        validLink.test(v);
-        const isValid = isURL(v);
-        return isValid;
-      },
-      message: 'Неправильный формат ссылки',
-    },
-  },
-  owner: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-  },
-  movieId: {
-    type: Number,
-    required: true,
-  },
-  nameRU: {
-    type: String,
-    required: true,
-  },
-  nameEN: {
-    type: String,
-    required: true,
-  },
-}, { versionKey: false });
+  {
+    versionKey: false,
+  }
+);
 
-module.exports = mongoose.model('movie', movieSchema);
+module.exports = mongoose.model("movie", movieSchema);

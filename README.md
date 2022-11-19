@@ -4,4 +4,4 @@
 
 * http://api.delm.diplom.nomoredomains.sbs/
 * https://api.delm.diplom.nomoredomains.sbs/
-* http://158.160.10.250
+* http://51.250.100.58
