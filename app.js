@@ -1,43 +1,48 @@
-require('dotenv').config();
-const express = require('express');
-const { errors } = require('celebrate');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
-const mongoose = require('mongoose');
-const errorHandler = require('./middlewares/error-handler');
-const { limiter } = require('./middlewares/rate-limit');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { PORT, MONGO_URL } = require('./utils/config');
-const rootRouter = require('./routes/index');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const helmet = require("helmet");
+const bodyParser = require("body-parser");
+const { errors } = require("celebrate");
+
+const router = require("./routes");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+const { centralizedHandleError } = require("./errors/centralizedHandleError");
+const {
+  DEV_DATA_BASE_PATH,
+  DEV_BASE_PATH,
+  DEV_PORT,
+} = require("./utils/devconfig");
+const { corsOption } = require("./utils/corsOption");
+const { limiter } = require("./utils/limitter");
+
+const { NODE_ENV, DATA_BASE_PATH, PORT, BASE_PATH } = process.env;
 
 const app = express();
-
-mongoose.connect(MONGO_URL, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-});
-
-app.use(cors({
-  origin: [
-    'http://api.delm.diplom.nomoredomains.sbs',
-    'http://localhost:3000',
-  ],
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-}));
+app.use(cors(corsOption));
 app.use(requestLogger);
-app.use(limiter);
-app.use(express.json());
-app.use(cookieParser());
-app.use(helmet());
-app.disable('x-powered-by');
-app.use(rootRouter);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(router);
 app.use(errorLogger);
 app.use(errors());
-app.use(errorHandler);
-app.listen(PORT, () => console.log(`App is listening on port ${PORT}`));
+app.use(centralizedHandleError);
+
+async function main() {
+  await mongoose.connect(
+    NODE_ENV === "production" ? DATA_BASE_PATH : DEV_DATA_BASE_PATH,
+    { useNewUrlParser: true }
+  );
+  console.log("Connected to db");
+  await app.listen(NODE_ENV === "production" ? PORT : DEV_PORT, () => {
+    console.log(
+      `App listening on port ${NODE_ENV === "production" ? PORT : DEV_PORT}`
+    );
+    console.log(
+      NODE_ENV === "production" ? `${BASE_PATH}:${PORT}` : DEV_BASE_PATH
+    );
+  });
+}
+
+main();
